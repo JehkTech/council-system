@@ -23,11 +23,12 @@ If you are not using Git yet, create the folder structure manually as shown in `
 
 ## Step 2: Set up the database
 
-Open a MySQL shell and run:
+Open a MySQL shell as `root` and run. Replace `choose_a_password` with the real password you want to use, then enter that same password when `mysql -u council_user -p ...` prompts you later.
 
 ```sql
-CREATE DATABASE council_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'council_user'@'localhost' IDENTIFIED BY 'choose_a_password';
+CREATE DATABASE IF NOT EXISTS council_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'council_user'@'localhost' IDENTIFIED BY 'choose_a_password';
+ALTER USER 'council_user'@'localhost' IDENTIFIED BY 'choose_a_password';
 GRANT ALL PRIVILEGES ON council_db.* TO 'council_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;

@@ -27,19 +27,21 @@ CREATE TABLE users (
     deleted_at    DATETIME     NULL
 );
 
-CREATE INDEX idx_users_email   ON users(email)   WHERE deleted_at IS NULL;  -- fast login lookup
-CREATE INDEX idx_users_role    ON users(role)    WHERE deleted_at IS NULL;  -- admin panel filter
+CREATE INDEX idx_users_email_deleted ON users(email, deleted_at); -- fast login lookup
+CREATE INDEX idx_users_role_deleted  ON users(role, deleted_at);  -- admin panel filter
 
 -- ============================================================
 -- PASSWORD RESET TOKENS
 -- ============================================================
 CREATE TABLE password_reset_tokens (
     id         CHAR(36)  PRIMARY KEY DEFAULT (UUID()),
-    user_id    CHAR(36)  NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id    CHAR(36)  NOT NULL,
     token_hash VARCHAR(255) NOT NULL UNIQUE,         -- store SHA-256 of raw token, never raw
     expires_at DATETIME  NOT NULL,
     used_at    DATETIME  NULL,                       -- NULL = not yet used
-    created_at DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_prt_user
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_prt_user ON password_reset_tokens(user_id);
@@ -72,8 +74,8 @@ INSERT INTO services (code, name, category) VALUES
 CREATE TABLE applications (
     id               CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
     reference_no     VARCHAR(20)  NOT NULL UNIQUE,               -- e.g. LCS-2026-0001
-    user_id          CHAR(36)     NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-    service_id       CHAR(36)     NOT NULL REFERENCES services(id) ON DELETE RESTRICT,
+    user_id          CHAR(36)     NOT NULL,
+    service_id       CHAR(36)     NOT NULL,
     status           ENUM(
                        'draft',
                        'submitted',
@@ -84,17 +86,23 @@ CREATE TABLE applications (
                      ) NOT NULL DEFAULT 'submitted',
     applicant_notes  TEXT         NULL,                          -- notes from citizen
     officer_notes    TEXT         NULL,                          -- internal officer remarks
-    reviewed_by      CHAR(36)     NULL REFERENCES users(id),     -- officer who acted
+    reviewed_by      CHAR(36)     NULL,                          -- officer who acted
     reviewed_at      DATETIME     NULL,
     document_path    VARCHAR(500) NULL,                          -- relative path on server
     document_name    VARCHAR(255) NULL,
     submitted_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at       DATETIME     NULL
+    deleted_at       DATETIME     NULL,
+    CONSTRAINT fk_app_user
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_app_service
+      FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_app_reviewed_by
+      FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_app_user    ON applications(user_id)   WHERE deleted_at IS NULL;
-CREATE INDEX idx_app_status  ON applications(status)    WHERE deleted_at IS NULL;
+CREATE INDEX idx_app_user_deleted   ON applications(user_id, deleted_at);
+CREATE INDEX idx_app_status_deleted ON applications(status, deleted_at);
 CREATE INDEX idx_app_service ON applications(service_id);
 CREATE INDEX idx_app_ref     ON applications(reference_no);
 
@@ -103,12 +111,16 @@ CREATE INDEX idx_app_ref     ON applications(reference_no);
 -- ============================================================
 CREATE TABLE app_status_logs (
     id             CHAR(36)  PRIMARY KEY DEFAULT (UUID()),
-    application_id CHAR(36)  NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
-    changed_by     CHAR(36)  NULL REFERENCES users(id),          -- NULL = system
+    application_id CHAR(36)  NOT NULL,
+    changed_by     CHAR(36)  NULL,                               -- NULL = system
     old_status     VARCHAR(20) NULL,
     new_status     VARCHAR(20) NOT NULL,
     note           TEXT      NULL,                               -- reason for change
-    created_at     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at     DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_log_application
+      FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+    CONSTRAINT fk_log_changed_by
+      FOREIGN KEY (changed_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_log_app ON app_status_logs(application_id);     -- timeline queries
@@ -118,24 +130,15 @@ CREATE INDEX idx_log_app ON app_status_logs(application_id);     -- timeline que
 -- ============================================================
 CREATE TABLE feedback (
     id             CHAR(36)     PRIMARY KEY DEFAULT (UUID()),
-    application_id CHAR(36)     NOT NULL UNIQUE REFERENCES applications(id) ON DELETE CASCADE,
-    user_id        CHAR(36)     NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
+    application_id CHAR(36)     NOT NULL UNIQUE,
+    user_id        CHAR(36)     NOT NULL,
     rating         TINYINT      NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment        TEXT         NULL,
-    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_feedback_application
+      FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+    CONSTRAINT fk_feedback_user
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- UNIQUE on application_id ensures one feedback per approved application
-
--- ============================================================
--- REFERENCE NO GENERATOR PROCEDURE
--- ============================================================
-DELIMITER $$
-CREATE PROCEDURE generate_reference_no(OUT ref_no VARCHAR(20))
-BEGIN
-  DECLARE seq INT;
-  SELECT COUNT(*) + 1 INTO seq FROM applications;
-  SET ref_no = CONCAT('LCS-', YEAR(NOW()), '-', LPAD(seq, 4, '0'));
-END$$
-DELIMITER ;
-
