@@ -9,6 +9,7 @@ const authRoutes         = require('./routes/auth');
 const applicationRoutes  = require('./routes/applications');
 const adminRoutes        = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
+const serviceRoutes      = require('./routes/services');
 
 const app = express();
 
@@ -20,6 +21,7 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, standardHeaders:
 app.use('/api', limiter);
 
 app.use('/api/auth',         authRoutes);
+app.use('/api/services',     serviceRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin',        adminRoutes);
 app.use('/api/notify',       notificationRoutes);

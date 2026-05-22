@@ -68,6 +68,18 @@ INSERT INTO services (code, name, category) VALUES
   ('RESIDENCE_CERT',      'Residence Certificate',           'certificate'),
   ('COMMUNITY_REG',       'Community Organisation Registration', 'registration');
 
+-- Seed local admin account for development login:
+-- email: admin@council.local
+-- password: adminpass123
+INSERT INTO users (id, full_name, email, password_hash, role)
+VALUES (
+  UUID(),
+  'Council Admin',
+  'admin@council.local',
+  '$2b$12$HKrMO9yhPyeBUE5SLdIMgOv69KEsqdYCxsqojqn/EMfn/Urq2.uUW',
+  'admin'
+);
+
 -- ============================================================
 -- APPLICATIONS
 -- ============================================================

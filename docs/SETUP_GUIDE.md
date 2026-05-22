@@ -181,18 +181,33 @@ Open `http://localhost:5173` in your browser. You should see the login page.
 
 ---
 
-## Step 9: Create your first admin user
+## Step 9: Confirm your first admin user
 
-Because the registration form creates `citizen` accounts only, you need to manually create an admin account in the database:
+The schema seeds a local admin account because the registration form creates `citizen` accounts only.
+
+Default local admin credentials:
+
+```text
+Email: admin@council.local
+Password: adminpass123
+```
+
+If you imported an older schema before this seed existed, create or reset the admin account with:
 
 ```sql
-INSERT INTO users (id, full_name, email, password_hash, role) VALUES (
+INSERT INTO users (id, full_name, email, password_hash, role)
+VALUES (
   UUID(),
-  'Admin User',
+  'Council Admin',
   'admin@council.local',
-  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj2NjU8ezTqm', -- password: adminpass123
+  '$2b$12$HKrMO9yhPyeBUE5SLdIMgOv69KEsqdYCxsqojqn/EMfn/Urq2.uUW',
   'admin'
-);
+)
+ON DUPLICATE KEY UPDATE
+  password_hash = VALUES(password_hash),
+  role = 'admin',
+  is_active = 1,
+  deleted_at = NULL;
 ```
 
 > The hash above is for the password `adminpass123`. Change it immediately after first login by implementing the change-password flow, or generate your own hash:

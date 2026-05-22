@@ -6,6 +6,51 @@ This system follows a classic **three-tier client-server architecture** deployed
 
 ---
 
+## Client-server diagram
+
+```text
++-------------------------------+
+| Client browser                |
+| React + Vite frontend         |
+| Login, dashboard, admin UI    |
++---------------+---------------+
+                |
+                | HTTPS JSON API
+                | Authorization: Bearer JWT
+                v
++-------------------------------+
+| Node.js / Express backend     |
+| Routes: auth, services,       |
+| applications, admin, notify   |
+| Middleware: auth, rate limit  |
++---------------+---------------+
+                |
+                | mysql2/promise
+                v
++-------------------------------+
+| MySQL 8.0 database            |
+| users, services, applications |
+| app_status_logs, feedback,    |
+| password_reset_tokens         |
++-------------------------------+
+```
+
+## Folder structure decision
+
+The repository uses a monorepo with a clear backend/frontend split:
+
+```text
+council-system/
+  backend/    Express API, middleware, route modules, uploads
+  frontend/   Vite React app and API client
+  database/   MySQL schema and seed data
+  docs/       sprint plan, architecture, setup, API reference
+```
+
+This keeps deployment artifacts together while preserving ownership boundaries. Backend code does not import frontend code, frontend code communicates only through documented API routes, and the database schema is versioned alongside both.
+
+---
+
 ## Architecture decision record
 
 ### ADR-001: Modular monolith over microservices

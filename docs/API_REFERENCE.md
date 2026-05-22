@@ -146,6 +146,37 @@ Send a password reset link to the provided email address. Always returns success
 
 ---
 
+### POST /auth/reset-password
+
+Reset a password using the raw token sent by email.
+
+**Auth required:** No
+
+**Request body:**
+```json
+{
+  "token": "64-character-raw-reset-token",
+  "password": "newsecurepassword123"
+}
+```
+
+| Field | Required | Validation |
+|-------|----------|------------|
+| `token` | Yes | 64 characters |
+| `password` | Yes | Minimum 8 characters |
+
+**Response 200:**
+```json
+{ "data": { "updated": true } }
+```
+
+**Response 400:**
+```json
+{ "error": "TOKEN_INVALID" }
+```
+
+---
+
 ## Services routes
 
 ### GET /services
@@ -153,6 +184,8 @@ Send a password reset link to the provided email address. Always returns success
 Get all active service types (used to populate the apply form).
 
 **Auth required:** Yes (citizen, officer, admin)
+
+**Implemented in:** `backend/routes/services.js`
 
 **Response 200:**
 ```json
@@ -411,7 +444,7 @@ Update application status. Optionally upload an approved PDF document.
 
 **Request example (approval with file):**
 ```
-POST /api/admin/applications/abc123
+PATCH /api/admin/applications/abc123
 Content-Type: multipart/form-data
 
 status = approved
@@ -428,6 +461,8 @@ document = [PDF file binary]
 ```json
 { "error": "INVALID_STATUS" }
 ```
+
+**Week 1 frontend note:** The local admin panel can update `status` and `officer_notes` without uploading a PDF. A citizen download link appears only when an approved application has a `document_path`.
 
 ---
 
