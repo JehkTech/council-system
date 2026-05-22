@@ -1,3 +1,6 @@
+import React from 'react';
+import AuthPage from '../components/auth/AuthPage';
+
 export default function Login() {
-  return <main>Login</main>;
+  return <AuthPage initialMode="login" redirectTo="/" />;
 }

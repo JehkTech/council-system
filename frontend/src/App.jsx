@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { adminAPI, applicationsAPI, authAPI, servicesAPI } from './services/api';
 

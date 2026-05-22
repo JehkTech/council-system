@@ -2,6 +2,46 @@
 
 Source: `docs/SPRINT_PLAN.md`
 
+## Week 1 Verification Log
+
+What was checked during this pass:
+
+- `docs/ARCHITECTURE.md` matches the three-tier setup and monorepo decision
+- `database/schema.sql` includes the five core tables plus seed services and password reset tokens
+- `POST /api/auth/register`, `POST /api/auth/login`, and `POST /api/auth/forgot-password` are implemented and smoke-tested
+- `POST /api/auth/reset-password` is implemented and tested
+- Frontend auth routing now renders at `/login` and `/register`
+- `npm run build` passes for the frontend
+- The live backend responds on `/health`
+- The live backend returns services and admin applications data for the seeded admin account
+- `GET /api/applications/:id`, `GET /api/applications/:id/timeline`, and `GET /api/applications/:id/document` are implemented
+
+Open Week 1 items remaining at the time of this update:
+
+- Week 1 wireframes are still not generated in Stitch
+- Task 1 has not yet been submitted by email
+
+## Week 1 Wireframe Checklist
+
+Use this as the final review list before marking Task 1 wireframes complete:
+
+- [ ] Login / Register mockup exists
+- [ ] Citizen Dashboard mockup exists
+- [ ] Apply for Service mockup exists
+- [ ] Application Tracking Detail mockup exists
+- [ ] Admin Panel mockup exists
+- [ ] Each screen is exported or attached in a format ready for submission
+- [ ] The five wireframes are referenced in the Task 1 submission email
+
+## Week 1 Submission Notes
+
+- Subject line: `E-Governance Task One`
+- Recipient: `icudepartmentofict@gmail.com`
+- Include a short summary that Week 1 architecture, schema, auth, and frontend setup are complete
+- Mention that the remaining Week 1 blocker is wireframe generation if it is still in progress
+- Attach or link the 5 Stitch wireframes before sending
+- Keep a copy of the sent email and attachments for final reporting
+
 ## Task 1.1 - System Architecture Document
 
 - [x] Client-server / three-tier architecture documented in `docs/ARCHITECTURE.md`
@@ -70,3 +110,17 @@ Source: `docs/SPRINT_PLAN.md`
 - [x] React app runs on localhost:5173
 - [ ] 5 wireframe screens generated in Stitch
 - [ ] Task 1 submitted to `icudepartmentofict@gmail.com` with subject `E-Governance Task One`
+
+## Week 1 Evidence Collected
+
+- [x] Architecture document updated and aligned with current backend structure
+- [x] Frontend login page renders at `http://localhost:5173/login`
+- [x] Frontend build passes with `npm run build`
+- [x] Live backend health check passes on `/health`
+- [x] Admin login succeeds against the seeded account
+- [x] Services endpoint returns all seeded services
+- [x] Admin applications endpoint returns HTTP 200
+- [x] Application detail endpoint returns HTTP 200 for a created application
+- [x] Timeline endpoint returns HTTP 200 for a created application
+- [x] Document endpoint returns HTTP 403 for a non-approved application, as expected
+- [x] New application creation returns a reference number in the `LCS-YYYY-NNNN` format
