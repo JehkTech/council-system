@@ -218,6 +218,26 @@ ON DUPLICATE KEY UPDATE
 
 ---
 
+## Step 9.1: Create a dummy citizen user (optional)
+
+Option A — register from the UI:
+1. Open `http://localhost:5173`
+2. Click **Register**
+3. Create a new citizen account
+
+Option B — insert a test user directly:
+1. Generate a bcrypt hash:
+```bash
+node -e "const b=require('bcryptjs'); b.hash('testpass123', 12).then(console.log)"
+```
+2. Insert the user:
+```sql
+INSERT INTO users (id, full_name, email, password_hash, role)
+VALUES (UUID(), 'Test Citizen', 'test.citizen@example.com', '<PASTE_HASH_HERE>', 'citizen');
+```
+
+---
+
 ## Step 10: Verify the full flow
 
 1. Open `http://localhost:5173`

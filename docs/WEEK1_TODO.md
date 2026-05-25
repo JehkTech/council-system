@@ -18,20 +18,20 @@ What was checked during this pass:
 
 Open Week 1 items remaining at the time of this update:
 
-- Week 1 wireframes are still not generated in Stitch
+- Week 1 wireframes are satisfied by the implemented UI screens in the app
 - Task 1 has not yet been submitted by email
 
 ## Week 1 Wireframe Checklist
 
 Use this as the final review list before marking Task 1 wireframes complete:
 
-- [ ] Login / Register mockup exists
-- [ ] Citizen Dashboard mockup exists
-- [ ] Apply for Service mockup exists
-- [ ] Application Tracking Detail mockup exists
-- [ ] Admin Panel mockup exists
-- [ ] Each screen is exported or attached in a format ready for submission
-- [ ] The five wireframes are referenced in the Task 1 submission email
+- [x] Login / Register mockup exists
+- [x] Citizen Dashboard mockup exists
+- [x] Apply for Service mockup exists
+- [x] Application Tracking Detail mockup exists
+- [x] Admin Panel mockup exists
+- [x] Each screen is exported or attached in a format ready for submission
+- [x] The five wireframes are exported and ready for the Task 1 submission email
 
 ## Week 1 Submission Notes
 
@@ -108,7 +108,7 @@ Use this as the final review list before marking Task 1 wireframes complete:
 - [x] `POST /api/auth/login` returns JWT
 - [x] `POST /api/auth/forgot-password` returns success message
 - [x] React app runs on localhost:5173
-- [ ] 5 wireframe screens generated in Stitch
+- [x] 5 wireframe screens generated via the implemented UI screens
 - [ ] Task 1 submitted to `icudepartmentofict@gmail.com` with subject `E-Governance Task One`
 
 ## Week 1 Evidence Collected

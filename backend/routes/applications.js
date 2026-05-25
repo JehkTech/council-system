@@ -4,6 +4,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { authenticate } = require('../middleware/auth');
 const db = require('../db');
+const { sendMail } = require('../utils/mailer');
 
 router.use(authenticate);
 
@@ -57,6 +58,8 @@ router.post('/', async (req, res, next) => {
     const id = uuidv4();
     const [countRows] = await db.query('SELECT COUNT(*) + 1 AS n FROM applications');
     const referenceNo = `LCS-${new Date().getFullYear()}-${String(countRows[0].n).padStart(4, '0')}`;
+    const [userRows] = await db.query('SELECT full_name, email FROM users WHERE id = ?', [req.user.id]);
+    const [serviceRows] = await db.query('SELECT name FROM services WHERE id = ?', [service_id]);
 
     await db.query(
       'INSERT INTO applications (id, reference_no, user_id, service_id, applicant_notes) VALUES (?,?,?,?,?)',
@@ -66,6 +69,15 @@ router.post('/', async (req, res, next) => {
       'INSERT INTO app_status_logs (id, application_id, changed_by, new_status) VALUES (UUID(), ?, ?, ?)',
       [id, req.user.id, 'submitted']
     );
+
+    if (userRows[0] && serviceRows[0]) {
+      sendMail({
+        to: userRows[0].email,
+        subject: `Application submitted - ${referenceNo}`,
+        text: `Hello ${userRows[0].full_name},\n\nYour application for ${serviceRows[0].name} has been submitted successfully. Your reference number is ${referenceNo}.`,
+        html: `<p>Hello ${userRows[0].full_name},</p><p>Your application for <strong>${serviceRows[0].name}</strong> has been submitted successfully.</p><p>Your reference number is <strong>${referenceNo}</strong>.</p>`,
+      }).catch((error) => console.error('Application submission email failed:', error.message));
+    }
 
     res.status(201).json({ data: { id, reference_no: referenceNo } });
   } catch (error) {

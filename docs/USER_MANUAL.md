@@ -153,6 +153,27 @@ Officers use the same login page as citizens. Enter your officer email and passw
 
 ---
 
+## B1.1 Demo credentials (local development only)
+
+Use these credentials only for local testing:
+
+- **Admin email:** `admin@council.local`
+- **Admin password:** `adminpass123`
+
+To create dummy citizen users, register from the login page or insert a test user in MySQL:
+
+```sql
+INSERT INTO users (id, full_name, email, password_hash, role)
+VALUES (UUID(), 'Test Citizen', 'test.citizen@example.com', '<PASTE_HASH_HERE>', 'citizen');
+```
+
+Generate the bcrypt hash with:
+```bash
+node -e "const b=require('bcryptjs'); b.hash('testpass123', 12).then(console.log)"
+```
+
+---
+
 ## B2. The admin panel overview
 
 The admin panel has the following sections:
