@@ -10,7 +10,7 @@ Citizens can submit applications, officers can review them, and email notificati
 
 - SMTP sandbox is already configured in `backend/.env`
 - Current mailer uses `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASS`, and `MAIL_FROM`
-- A successful forgot-password request should be used as the email smoke test unless a different sandbox inbox is requested
+- A successful forgot-password-otp request should be used as the email smoke test unless a different sandbox inbox is requested
 - Week 2 work will be documented here as it is completed
 
 ## Task 2.1 - Services API
@@ -67,7 +67,7 @@ Citizens can submit applications, officers can review them, and email notificati
 
 ## Week 2 Evidence Collected So Far
 
-- [x] Sandbox email flow returns success from `/api/auth/forgot-password`
+- [x] Sandbox email flow returns success from `/api/auth/forgot-password-otp`
 - [x] Application submission sends a notification email through the configured sandbox provider
 - [x] Application status updates send a notification email through the configured sandbox provider
 - [x] Browser login redirects to the citizen dashboard

@@ -8,8 +8,8 @@ What was checked during this pass:
 
 - `docs/ARCHITECTURE.md` matches the three-tier setup and monorepo decision
 - `database/schema.sql` includes the five core tables plus seed services and password reset tokens
-- `POST /api/auth/register`, `POST /api/auth/login`, and `POST /api/auth/forgot-password` are implemented and smoke-tested
-- `POST /api/auth/reset-password` is implemented and tested
+- `POST /api/auth/register`, `POST /api/auth/login`, and `POST /api/auth/forgot-password-otp` are implemented and smoke-tested
+- `POST /api/auth/reset-password-otp` is implemented and tested
 - Frontend auth routing now renders at `/login` and `/register`
 - `npm run build` passes for the frontend
 - The live backend responds on `/health`
@@ -62,8 +62,8 @@ Use this as the final review list before marking Task 1 wireframes complete:
 
 - [x] `POST /api/auth/register`
 - [x] `POST /api/auth/login`
-- [x] `POST /api/auth/forgot-password`
-- [x] `POST /api/auth/reset-password`
+- [x] `POST /api/auth/forgot-password-otp`
+- [x] `POST /api/auth/reset-password-otp`
 - [x] Register endpoint smoke-tested
 - [x] Login endpoint smoke-tested
 - [x] Forgot-password endpoint smoke-tested
@@ -94,7 +94,7 @@ Use this as the final review list before marking Task 1 wireframes complete:
 ## Task 1.6 - Password Reset Endpoint
 
 - [x] Forgot-password token hash stored
-- [x] Raw token reset link emailed
+- [x] 6-digit OTP emailed
 - [x] Reset-password route verifies token hash
 - [x] Reset-password route updates password
 - [x] Reset-password route marks token as used
@@ -106,7 +106,7 @@ Use this as the final review list before marking Task 1 wireframes complete:
 - [x] All required tables created and seeded
 - [x] `POST /api/auth/register` returns JWT
 - [x] `POST /api/auth/login` returns JWT
-- [x] `POST /api/auth/forgot-password` returns success message
+- [x] `POST /api/auth/forgot-password-otp` returns success message
 - [x] React app runs on localhost:5173
 - [x] 5 wireframe screens generated via the implemented UI screens
 - [ ] Task 1 submitted to `icudepartmentofict@gmail.com` with subject `E-Governance Task One`

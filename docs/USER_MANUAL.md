@@ -136,10 +136,10 @@ Your feedback helps the council improve its services. You can only submit feedba
 
 1. On the login page, click **Forgot password?** below the password field
 2. Enter your registered email address
-3. Click **Send Reset Link**
-4. Check your email inbox for a message from the council system
-5. Click the link in the email — it will take you to a page where you can set a new password
-6. The reset link is valid for 1 hour. If it expires, repeat the process
+3. Click **Send OTP**
+4. Check your email inbox for a 6-digit code from the council system
+5. Enter the OTP and your new password on the reset screen, then click **Reset Password**
+6. The OTP is valid for 15 minutes. If it expires, repeat the process from step 1
 
 ---
 

@@ -9,7 +9,6 @@ const { sendMail } = require('../utils/mailer');
 
 const sign = (user) => jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
-const publicResetBaseUrl = () => process.env.RESET_BASE_URL || process.env.CLIENT_URL || 'http://localhost:5173';
 
 router.post('/register', [
   body('full_name').trim().notEmpty(),
@@ -47,32 +46,67 @@ router.post('/login', [
   } catch(e){ next(e); }
 });
 
-router.post('/forgot-password', [body('email').isEmail().normalizeEmail()], async (req, res, next) => {
-  try {
-    const [rows] = await db.query('SELECT id,email FROM users WHERE email=? AND deleted_at IS NULL', [req.body.email]);
-    if (rows[0]) {
-      const raw = crypto.randomBytes(32).toString('hex');
-      const hashed = hashToken(raw);
-      const resetUrl = `${publicResetBaseUrl().replace(/\/$/, '')}/reset-password?token=${raw}`;
+router.post('/forgot-password-otp', [
+  body('email').isEmail().normalizeEmail(),
+], async (req, res, next) => {
+  const err = validationResult(req);
+  if (!err.isEmpty()) return res.status(400).json({ error: 'INVALID_INPUT' });
 
-      await db.query(
-        'INSERT INTO password_reset_tokens (id,user_id,token_hash,expires_at) VALUES(UUID(),?,?,DATE_ADD(NOW(),INTERVAL 1 HOUR))',
-        [rows[0].id, hashed]);
+  try {
+    const { email } = req.body;
+    const [rows] = await db.query('SELECT id,email FROM users WHERE email=? AND deleted_at IS NULL', [email]);
+    if (rows[0]) {
+      // Invalidate (delete) any previous reset tokens for this user
+      await db.query('DELETE FROM password_reset_tokens WHERE user_id = ?', [rows[0].id]);
+
+      let inserted = false;
+      let otp;
+      let hashed;
+      let attempts = 0;
+      // Retry loop to handle rare global OTP collisions
+      while (!inserted && attempts < 5) {
+        attempts++;
+        otp = crypto.randomInt(100000, 1000000).toString();
+        hashed = hashToken(otp);
+        try {
+          await db.query(
+            'INSERT INTO password_reset_tokens (id,user_id,token_hash,expires_at) VALUES(UUID(),?,?,DATE_ADD(NOW(),INTERVAL 15 MINUTE))',
+            [rows[0].id, hashed]
+          );
+          inserted = true;
+        } catch (dbErr) {
+          if (dbErr.code === 'ER_DUP_ENTRY') {
+            continue;
+          }
+          throw dbErr;
+        }
+      }
+
+      if (!inserted) {
+        throw new Error('Failed to generate a unique OTP after multiple attempts');
+      }
 
       await sendMail({
         to: rows[0].email,
         subject: 'Reset your Local Council Services password',
-        text: `Use this link to reset your password: ${resetUrl}\n\nThis link expires in 1 hour.`,
-        html: `<p>Use this link to reset your password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>This link expires in 1 hour.</p>`,
+        text: `Your password reset OTP is: ${otp}\n\nThis OTP is valid for 15 minutes.`,
+        html: `<p>Your password reset OTP is:</p><h2 style="font-size: 24px; letter-spacing: 2px;">${otp}</h2><p>This OTP is valid for 15 minutes.</p>`,
       });
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[password-reset] OTP sent to ${rows[0].email}: ${otp} (expires in 15 minutes)`);
+      }
     }
 
-    res.json({ data: { message: 'If that email exists, a reset link was sent.' } });
-  } catch(e){ next(e); }
+    res.json({ data: { message: 'If that email exists, an OTP was sent.' } });
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.post('/reset-password', [
-  body('token').isLength({ min: 64, max: 64 }),
+router.post('/reset-password-otp', [
+  body('email').isEmail().normalizeEmail(),
+  body('otp').isLength({ min: 6, max: 6 }).isNumeric(),
   body('password').isLength({ min: 8 }),
 ], async (req, res, next) => {
   const err = validationResult(req);
@@ -80,20 +114,26 @@ router.post('/reset-password', [
 
   const conn = await db.getConnection();
   try {
-    const tokenHash = hashToken(req.body.token);
+    const { email, otp, password } = req.body;
+    const otpHash = hashToken(otp);
+
+    // Look up the active token using the OTP hash and email
     const [rows] = await conn.query(
-      `SELECT id, user_id
-       FROM password_reset_tokens
-       WHERE token_hash = ?
-         AND used_at IS NULL
-         AND expires_at > NOW()
+      `SELECT prt.id, prt.user_id
+       FROM password_reset_tokens prt
+       JOIN users u ON prt.user_id = u.id
+       WHERE prt.token_hash = ?
+         AND u.email = ?
+         AND prt.used_at IS NULL
+         AND prt.expires_at > NOW()
+         AND u.deleted_at IS NULL
        LIMIT 1`,
-      [tokenHash]
+      [otpHash, email]
     );
 
     if (!rows[0]) return res.status(400).json({ error: 'TOKEN_INVALID' });
 
-    const passwordHash = await bcrypt.hash(req.body.password, 12);
+    const passwordHash = await bcrypt.hash(password, 12);
 
     await conn.beginTransaction();
     await conn.query('UPDATE users SET password_hash=? WHERE id=?', [passwordHash, rows[0].user_id]);

@@ -177,7 +177,7 @@ Two exports:
 - `authorize(...roles)` — returns a middleware that checks `req.user.role` against an allowed list
 
 ### `routes/auth.js`
-Handles registration, login, forgot-password, and reset-password. No authentication required on these routes.
+Handles registration, login, forgot-password OTP, and reset-password OTP. No authentication required on these routes.
 
 ### `routes/applications.js`
 All citizen-facing application operations. All routes require `authenticate`. The citizen can only see their own applications — every query filters by `user_id = req.user.id`.

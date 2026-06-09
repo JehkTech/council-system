@@ -66,7 +66,7 @@ Endpoints to build and test:
 |--------|-------|------|-------|
 | POST | `/api/auth/register` | None | [ ] |
 | POST | `/api/auth/login` | None | [ ] |
-| POST | `/api/auth/forgot-password` | None | [ ] |
+| POST | `/api/auth/forgot-password-otp` | None | [ ] |
 
 Test each endpoint with Postman before moving on. See `docs/API_REFERENCE.md` for request/response format.
 
@@ -131,9 +131,9 @@ Done when: 5 screen mockups exist and are attached to your Task 1 email submissi
 **Tool:** GitHub Copilot + Nodemailer
 
 Steps:
-1. `forgot-password` route creates a SHA-256 hashed token, stores in `password_reset_tokens`, sets expiry 1 hour
-2. Sends email with raw token link: `https://yoursite.com/reset-password?token=RAW_TOKEN`
-3. `reset-password` route verifies token hash, updates password, marks token as used
+1. `forgot-password-otp` route generates a 6-digit OTP, SHA-256 hashes it, stores in `password_reset_tokens`, sets expiry 15 minutes
+2. Sends email with the raw 6-digit OTP
+3. `reset-password-otp` route verifies OTP hash + email, updates password, marks token as used
 
 Done when: reset email sends in test (use Mailtrap or Gmail test account).
 
@@ -145,7 +145,7 @@ Done when: reset email sends in test (use Mailtrap or Gmail test account).
 - [ ] All 5 tables created and seeded
 - [ ] POST `/api/auth/register` returns JWT
 - [ ] POST `/api/auth/login` returns JWT
-- [ ] POST `/api/auth/forgot-password` returns success message
+- [ ] POST `/api/auth/forgot-password-otp` returns success message
 - [ ] React app runs on localhost:5173
 - [ ] 5 wireframe screens generated in Stitch
 - [ ] Task 1 submitted to icudepartmentofict@gmail.com with subject "E-Governance Task One"

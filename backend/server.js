@@ -34,5 +34,59 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || 'INTERNAL_SERVER_ERROR' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Council API running on port ${PORT}`));
+const net = require('net');
+
+const BASE_PORT = Number(process.env.PORT) || 3000;
+const MAX_PORT_TRIES = 5;
+
+function isPortFree(port) {
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+    probe.once('error', () => resolve(false));
+    probe.once('listening', () => probe.close(() => resolve(true)));
+    probe.listen(port);
+  });
+}
+
+async function resolvePort(start) {
+  for (let i = 0; i < MAX_PORT_TRIES; i++) {
+    const port = start + i;
+    if (await isPortFree(port)) return port;
+    if (i < MAX_PORT_TRIES - 1) {
+      console.log(`Port ${port} is in use, trying ${port + 1}...`);
+    }
+  }
+  return null;
+}
+
+function printPortInUseHelp(blockedPort) {
+  const suggested = blockedPort + 1;
+  console.error(`\nPort ${blockedPort} is already in use (EADDRINUSE).`);
+  console.error(`Ports ${blockedPort}–${blockedPort + MAX_PORT_TRIES - 1} are unavailable.`);
+  console.error('Free the existing process, or start on another port:');
+  console.error(`  PowerShell:  $env:PORT=${suggested}; npm start`);
+  console.error(`  Cmd:         set PORT=${suggested} && npm start`);
+  console.error(`Then set VITE_API_URL=http://localhost:${suggested}/api in frontend/.env\n`);
+}
+
+(async () => {
+  const port = await resolvePort(BASE_PORT);
+  if (!port) {
+    printPortInUseHelp(BASE_PORT);
+    process.exit(1);
+  }
+
+  if (port !== BASE_PORT) {
+    console.log(`Port ${BASE_PORT} is in use — starting on port ${port} instead.`);
+    console.log(`Update frontend VITE_API_URL to http://localhost:${port}/api if needed.`);
+  }
+
+  const server = app.listen(port, () => console.log(`Council API running on port ${port}`));
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      printPortInUseHelp(port);
+      process.exit(1);
+    }
+    throw err;
+  });
+})();

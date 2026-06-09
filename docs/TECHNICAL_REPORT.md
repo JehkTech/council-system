@@ -157,7 +157,7 @@ Two exports:
 - `authorize(...roles)` — returns a middleware that checks `req.user.role` against an allowed list
 
 ### `routes/auth.js`
-Handles registration, login, and forgot-password. No authentication required on these routes.
+Handles registration, login, forgot-password OTP, and reset-password OTP. No authentication required on these routes.
 
 ### `routes/applications.js`
 All citizen-facing application operations. All routes require `authenticate`. The citizen can only see their own applications — every query filters by `user_id = req.user.id`.
@@ -342,18 +342,18 @@ Stores all system users — citizens, council officers, and admins. Role determi
 
 ## Table: `password_reset_tokens`
 
-Stores secure tokens for the forgot-password flow. The raw token is emailed to the user; only its SHA-256 hash is stored in the database.
+Stores secure OTP hashes for the password reset flow. The raw 6-digit OTP is emailed to the user; only its SHA-256 hash is stored in the database.
 
 | Column | Type | Nullable | Default | Notes |
 |--------|------|----------|---------|-------|
 | `id` | CHAR(36) | No | UUID() | Primary key |
 | `user_id` | CHAR(36) | No | — | FK → users(id) CASCADE DELETE |
-| `token_hash` | VARCHAR(255) | No | — | SHA-256 of the emailed raw token |
-| `expires_at` | DATETIME | No | — | Set to NOW() + 1 hour on insert |
-| `used_at` | DATETIME | Yes | NULL | Set when token is consumed |
+| `token_hash` | VARCHAR(255) | No | — | SHA-256 of the emailed 6-digit OTP |
+| `expires_at` | DATETIME | No | — | Set to NOW() + 15 minutes on insert |
+| `used_at` | DATETIME | Yes | NULL | Set when OTP is consumed |
 | `created_at` | DATETIME | No | NOW() | — |
 
-**Why hash the token?** If the database is compromised, an attacker cannot use stored hashes to reset passwords. Only the recipient of the original email has the raw token.
+**Why hash the OTP?** If the database is compromised, an attacker cannot use stored hashes to reset passwords. Only the recipient of the original email has the raw OTP.
 
 ---
 

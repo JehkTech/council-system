@@ -229,7 +229,7 @@ ORDER BY submitted_at ASC;
 
 #### Reset a User's Password (Manual Testing Only)
 ```sql
--- Note: Passwords are hashed with bcrypt. Use the app's forgot-password flow in production.
+-- Note: Passwords are hashed with bcrypt. Use the app's OTP forgot-password flow in production.
 -- This is for testing only.
 UPDATE users 
 SET password_hash = '$2b$12$HKrMO9yhPyeBUE5SLdIMgOv69KEsqdYCxsqojqn/EMfn/Urq2.uUW'

@@ -124,9 +124,9 @@ Log in with email and password.
 
 ---
 
-### POST /auth/forgot-password
+### POST /auth/forgot-password-otp
 
-Send a password reset link to the provided email address. Always returns success — does not reveal whether the email exists.
+Send a 6-digit password reset OTP to the provided email address. Always returns success — does not reveal whether the email exists. Any previous reset tokens for the user are invalidated before a new OTP is issued. OTPs expire after **15 minutes**.
 
 **Auth required:** No
 
@@ -139,30 +139,32 @@ Send a password reset link to the provided email address. Always returns success
 ```json
 {
   "data": {
-    "message": "If that email exists, a reset link was sent."
+    "message": "If that email exists, an OTP was sent."
   }
 }
 ```
 
 ---
 
-### POST /auth/reset-password
+### POST /auth/reset-password-otp
 
-Reset a password using the raw token sent by email.
+Reset a password using the 6-digit OTP sent by email.
 
 **Auth required:** No
 
 **Request body:**
 ```json
 {
-  "token": "64-character-raw-reset-token",
+  "email": "john@example.com",
+  "otp": "123456",
   "password": "newsecurepassword123"
 }
 ```
 
 | Field | Required | Validation |
 |-------|----------|------------|
-| `token` | Yes | 64 characters |
+| `email` | Yes | Valid email address |
+| `otp` | Yes | Exactly 6 numeric digits |
 | `password` | Yes | Minimum 8 characters |
 
 **Response 200:**

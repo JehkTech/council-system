@@ -11,6 +11,8 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
+  forgotPasswordOTP: (email) => api.post('/auth/forgot-password-otp', { email }),
+  resetPasswordOTP: (email, otp, password) => api.post('/auth/reset-password-otp', { email, otp, password }),
 };
 
 export const servicesAPI = {
