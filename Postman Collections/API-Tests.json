@@ -276,30 +276,6 @@
 				}
 			],
 			"id": "3ccfc3fc-7267-4fa8-8bd1-ae128bb56c51"
-		},
-		{
-			"name": "New Request",
-			"id": "f801b38a-95d8-4dfa-ae00-df75285e8656",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "New Request",
-			"id": "fd63b64e-968c-4375-878f-8008005418ff",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
 		}
 	]
 }
