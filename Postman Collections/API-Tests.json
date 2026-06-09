@@ -1,0 +1,22 @@
+{
+	"info": {
+		"_postman_id": "6f45258d-5f6f-4390-b8e5-aa585707662c",
+		"name": "cofmes-Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST cofmes",
+			"id": "243022a6-7fc4-42e3-b98a-fb86288c6cb4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": ""
+			},
+			"response": []
+		}
+	]
+}
