@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "6f45258d-5f6f-4390-b8e5-aa585707662c",
 		"name": "e-governance-test-api",
+		"description": "This collection contains endpoints for the e-governance API, covering citizen authentication, service discovery, application submission and tracking, feedback submission, and administrative application management. It is intended for testing and validating the core user and admin workflows of the platform.\n\nError codes:\n\n- UNAUTHORIZED (401): No token or token expired\n    \n- TOKEN_INVALID (401): Token signature invalid or malformed\n    \n- FORBIDDEN (403): Token valid but role not permitted\n    \n- NOT_FOUND (404): Resource does not exist\n    \n- EMAIL_IN_USE (409): Registration email already registered\n    \n- INVALID_CREDENTIALS (401): Login — wrong email or password\n    \n- INVALID_INPUT (400): Validation failed — see message for detail\n    \n- INVALID_STATUS (400): Admin patch — status not in allowed list\n    \n- INTERNAL_SERVER_ERROR (500): Unhandled server error",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
