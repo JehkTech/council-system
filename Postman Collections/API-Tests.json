@@ -4,5 +4,277 @@
 		"name": "e-governance-test-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
-	"item": []
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "POST /auth/register",
+					"id": "7c8c9ce6-d5ff-44f8-931f-a93008256aca",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/auth/register",
+						"description": "Register a new citizen account."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/login",
+					"id": "2258e341-24d1-4ddd-8a91-7b00997c3a5b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/auth/login",
+						"description": "Authenticate a citizen and obtain access credentials."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/forgot-password-otp",
+					"id": "cc127531-8c12-46d2-822d-6e3376189082",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/auth/forgot-password-otp",
+						"description": "Send a 6-digit password reset OTP to the provided email address without revealing whether the email exists. Any previous reset tokens are invalidated and the OTP expires after 15 minutes."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/reset-password-otp",
+					"id": "1d052b0d-95d1-4fff-b14c-f857218191b3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/auth/reset-password-otp",
+						"description": "Reset a citizen password using a valid OTP."
+					},
+					"response": []
+				}
+			],
+			"id": "6bb766bc-5f58-4de9-9b98-639075591e14"
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "GET /services",
+					"id": "0a746504-15f3-4e62-8c31-1f53b122dfdb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{VITE_API_URL}}/services",
+						"description": "Retrieve the list of available public services."
+					},
+					"response": []
+				}
+			],
+			"id": "07b4bdea-44d3-4a8f-a939-e29238e072e7"
+		},
+		{
+			"name": "Applications",
+			"item": [
+				{
+					"name": "GET /applications",
+					"id": "3137795b-07ce-4d4e-b416-4b3070fc567e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{VITE_API_URL}}/applications",
+						"description": "Retrieve submitted applications for the authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /applications",
+					"id": "bc19cb0e-447b-45e6-96ee-d9fa6ad538f6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/applications",
+						"description": "Submit a new application."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /applications/:id",
+					"id": "9f7d6154-72f2-4a87-b493-5be13b4a8441",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{VITE_API_URL}}/applications/:id",
+							"host": [
+								"{{VITE_API_URL}}"
+							],
+							"path": [
+								"applications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						},
+						"description": "Retrieve the details of a specific application."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /applications/:id/timeline",
+					"id": "3c11e24d-1be2-4237-af81-b55008dcf4f5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{VITE_API_URL}}/applications/:id/timeline",
+							"host": [
+								"{{VITE_API_URL}}"
+							],
+							"path": [
+								"applications",
+								":id",
+								"timeline"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						},
+						"description": "Retrieve the status timeline for a specific application."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /applications/:id/document",
+					"id": "724d1cec-a0b4-41ba-976b-8e3e571e778c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{VITE_API_URL}}/applications/:id/document",
+							"host": [
+								"{{VITE_API_URL}}"
+							],
+							"path": [
+								"applications",
+								":id",
+								"document"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						},
+						"description": "Retrieve the document associated with a specific application."
+					},
+					"response": []
+				}
+			],
+			"id": "6511ef65-372f-457a-a12b-2bdbbfffadae"
+		},
+		{
+			"name": "Feedback",
+			"item": [
+				{
+					"name": "POST /feedback",
+					"id": "915cba7f-a448-4348-a261-30d4cbed43a4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{VITE_API_URL}}/feedback",
+						"description": "Submit citizen feedback."
+					},
+					"response": []
+				}
+			],
+			"id": "8f9b50de-6cf9-4bea-b9a6-271fe5a24b96"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "GET /admin/applications",
+					"id": "0f2e9896-b936-45a2-8e6c-c7eb3cf33c15",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{VITE_API_URL}}/admin/applications",
+						"description": "Retrieve applications for administrative review."
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /admin/applications/:id",
+					"id": "ed31e903-27f7-4e78-bc89-c0d3ffe6830f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{VITE_API_URL}}/admin/applications/:id",
+							"host": [
+								"{{VITE_API_URL}}"
+							],
+							"path": [
+								"admin",
+								"applications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						},
+						"description": "Update the status or details of a specific application as an administrator."
+					},
+					"response": []
+				}
+			],
+			"id": "3ccfc3fc-7267-4fa8-8bd1-ae128bb56c51"
+		}
+	]
 }
